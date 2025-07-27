@@ -10,6 +10,9 @@ export default function CreateGame() {
   const [error, setError] = useState('');
   const router = useRouter();
 
+  // Get the backend URL from environment or use a default
+  const backendUrl = process.env.NEXT_PUBLIC_API_URL || 'https://vibr-backend.onrender.com';
+
   const generateGame = async () => {
     if (!prompt.trim()) {
       setError('Please enter a game description');
@@ -20,7 +23,7 @@ export default function CreateGame() {
     setError('');
 
     try {
-      const response = await fetch('/api/generate-game', {
+      const response = await fetch(`${backendUrl}/api/generate-game`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -33,7 +36,7 @@ export default function CreateGame() {
       if (data.success) {
         setGameCode(data.code);
       } else {
-        setError(data.error || 'Failed to generate game');
+        setError(data.message || 'Failed to generate game');
       }
     } catch (err) {
       setError('Failed to connect to server');
