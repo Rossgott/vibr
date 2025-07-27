@@ -35,6 +35,26 @@ An AI-powered platform that enables anyone—technical or non-technical—to cre
 - "Make a simple platformer game with a character that can jump and collect coins. The character should be able to double jump and there should be obstacles to avoid."
 - "Build a puzzle game where players need to match colored blocks. Include a timer and score system with increasing difficulty levels."
 
+## 🤖 AI Options
+
+Vibr supports multiple AI providers for game generation:
+
+### **Option 1: Anthropic Claude (Recommended)**
+- **Best for**: High-quality, creative game generation
+- **Cost**: ~$0.01-0.05 per game generation
+- **Setup**: Get API key from [console.anthropic.com](https://console.anthropic.com)
+
+### **Option 2: OpenAI GPT-4**
+- **Best for**: Reliable, consistent game generation
+- **Cost**: ~$0.02-0.10 per game generation
+- **Setup**: Get API key from [platform.openai.com](https://platform.openai.com)
+
+### **Option 3: No AI (Demo Mode)**
+- **Best for**: Testing and demonstration
+- **Cost**: Free
+- **Features**: Basic template games, no custom generation
+- **Setup**: Deploy without any API keys
+
 ## 🏗️ Architecture
 
 ### Frontend
@@ -48,7 +68,7 @@ An AI-powered platform that enables anyone—technical or non-technical—to cre
 - **API**: FastAPI (Python)
 - **Database**: PostgreSQL (production) / SQLite (development)
 - **Authentication**: JWT tokens
-- **AI Integration**: Anthropic Claude API
+- **AI Integration**: Anthropic Claude API / OpenAI GPT-4
 - **Storage**: AWS S3 for assets
 - **Deployment**: Railway
 
@@ -63,13 +83,30 @@ An AI-powered platform that enables anyone—technical or non-technical—to cre
 
 The easiest way to deploy your own instance:
 
+#### **Option A: With AI (Full Features)**
+1. **Fork this repository** to your GitHub account
+2. **Get AI API key** (Anthropic or OpenAI)
+3. **Deploy to Railway** (Backend):
+   - Visit [Railway](https://railway.app/)
+   - Connect your GitHub repo
+   - Add environment variables:
+     - `ANTHROPIC_API_KEY`: Your Anthropic API key (or)
+     - `OPENAI_API_KEY`: Your OpenAI API key
+     - `SECRET_KEY`: A secure random string
+4. **Deploy to Vercel** (Frontend):
+   - Visit [Vercel](https://vercel.com/)
+   - Import your GitHub repo
+   - Set environment variable:
+     - `NEXT_PUBLIC_API_URL`: Your Railway backend URL
+
+#### **Option B: Without AI (Demo Mode)**
 1. **Fork this repository** to your GitHub account
 2. **Deploy to Railway** (Backend):
    - Visit [Railway](https://railway.app/)
    - Connect your GitHub repo
-   - Add environment variables:
-     - `ANTHROPIC_API_KEY`: Your Anthropic API key
+   - Add environment variable:
      - `SECRET_KEY`: A secure random string
+   - **No AI API key needed** - will use fallback mode
 3. **Deploy to Vercel** (Frontend):
    - Visit [Vercel](https://vercel.com/)
    - Import your GitHub repo
@@ -217,6 +254,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 - [Anthropic](https://anthropic.com/) for Claude AI API
+- [OpenAI](https://openai.com/) for GPT-4 API
 - [Pygame](https://www.pygame.org/) for 2D game development
 - [Next.js](https://nextjs.org/) for the frontend framework
 - [FastAPI](https://fastapi.tiangolo.com/) for the backend API

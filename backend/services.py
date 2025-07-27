@@ -3,6 +3,8 @@ from typing import List, Optional
 import anthropic
 import os
 from dotenv import load_dotenv
+import openai
+from openai import OpenAI
 
 from models import User, Game, Asset, GameShare
 from schemas import UserCreate, GameCreate, GameUpdate, AssetCreate
@@ -109,30 +111,63 @@ class GameService:
 
 class AIService:
     def __init__(self):
-        self.client = anthropic.Anthropic(
-            api_key=os.getenv("ANTHROPIC_API_KEY")
-        )
-    
-    async def generate_game_code(self, prompt: str) -> str:
-        """Generate game code using Claude API"""
-        system_prompt = """You are an expert game developer specializing in creating simple 2D games using Python and Pygame. 
+        self.anthropic_client = None
+        self.openai_client = None
+        self.use_fallback = False
         
-        When given a game description, generate complete, runnable Python code that:
-        1. Uses Pygame for graphics and input
-        2. Creates a simple, fun 2D game
-        3. Includes proper game loop, collision detection, and basic physics
-        4. Has clear, well-commented code
-        5. Is ready to run immediately
+        # Try to initialize Anthropic
+        anthropic_key = os.getenv("ANTHROPIC_API_KEY")
+        if anthropic_key:
+            try:
+                self.anthropic_client = anthropic.Anthropic(api_key=anthropic_key)
+                print("✅ Anthropic API initialized")
+            except Exception as e:
+                print(f"❌ Failed to initialize Anthropic: {e}")
         
-        The code should be self-contained and not require additional assets unless specifically mentioned.
-        Focus on creating engaging, playable games that match the user's description."""
+        # Try to initialize OpenAI as fallback
+        openai_key = os.getenv("OPENAI_API_KEY")
+        if openai_key:
+            try:
+                self.openai_client = OpenAI(api_key=openai_key)
+                print("✅ OpenAI API initialized as fallback")
+            except Exception as e:
+                print(f"❌ Failed to initialize OpenAI: {e}")
         
+        # If no AI providers available, use fallback mode
+        if not self.anthropic_client and not self.openai_client:
+            self.use_fallback = True
+            print("⚠️ No AI API keys found - using fallback mode")
+
+    def generate_game_code(self, prompt: str) -> str:
+        """Generate game code from natural language prompt"""
+        
+        if self.anthropic_client:
+            return self._generate_with_anthropic(prompt)
+        elif self.openai_client:
+            return self._generate_with_openai(prompt)
+        else:
+            return self._generate_fallback(prompt)
+
+    def _generate_with_anthropic(self, prompt: str) -> str:
+        """Generate using Anthropic Claude"""
         try:
-            response = self.client.messages.create(
+            response = self.anthropic_client.messages.create(
                 model="claude-3-sonnet-20240229",
                 max_tokens=4000,
-                system=system_prompt,
                 messages=[
+                    {
+                        "role": "system",
+                        "content": """You are an expert game developer who creates Python/Pygame games from natural language descriptions. 
+                        Generate complete, runnable game code that includes:
+                        - All necessary imports
+                        - Game initialization
+                        - Main game loop
+                        - Player controls
+                        - Game mechanics
+                        - Basic graphics and sound
+                        
+                        Return ONLY the Python code, no explanations."""
+                    },
                     {
                         "role": "user",
                         "content": f"Create a 2D game based on this description: {prompt}"
@@ -141,41 +176,174 @@ class AIService:
             )
             return response.content[0].text
         except Exception as e:
-            raise Exception(f"AI generation failed: {str(e)}")
-    
-    async def update_game_code(self, game_id: int, update_prompt: str, db: Session) -> str:
-        """Update existing game code based on new prompt"""
-        # Get current game code
-        game = db.query(Game).filter(Game.id == game_id).first()
-        if not game:
-            raise Exception("Game not found")
-        
-        system_prompt = """You are an expert game developer. You will be given existing Python/Pygame code and a request to modify it.
-        
-        Your task is to:
-        1. Understand the existing code structure
-        2. Make the requested modifications
-        3. Ensure the code remains functional and well-structured
-        4. Preserve the core game mechanics while implementing the changes
-        5. Return the complete updated code
-        
-        Always return the full, updated code, not just the changes."""
-        
+            print(f"Anthropic API error: {e}")
+            if self.openai_client:
+                return self._generate_with_openai(prompt)
+            else:
+                return self._generate_fallback(prompt)
+
+    def _generate_with_openai(self, prompt: str) -> str:
+        """Generate using OpenAI GPT"""
         try:
-            response = self.client.messages.create(
-                model="claude-3-sonnet-20240229",
+            response = self.openai_client.chat.completions.create(
+                model="gpt-4",
                 max_tokens=4000,
-                system=system_prompt,
                 messages=[
                     {
+                        "role": "system",
+                        "content": """You are an expert game developer who creates Python/Pygame games from natural language descriptions. 
+                        Generate complete, runnable game code that includes:
+                        - All necessary imports
+                        - Game initialization
+                        - Main game loop
+                        - Player controls
+                        - Game mechanics
+                        - Basic graphics and sound
+                        
+                        Return ONLY the Python code, no explanations."""
+                    },
+                    {
                         "role": "user",
-                        "content": f"Here's the current game code:\n\n{game.code}\n\nPlease modify it according to this request: {update_prompt}"
+                        "content": f"Create a 2D game based on this description: {prompt}"
+                    }
+                ]
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            print(f"OpenAI API error: {e}")
+            return self._generate_fallback(prompt)
+
+    def _generate_fallback(self, prompt: str) -> str:
+        """Generate a simple fallback game when no AI is available"""
+        return f'''import pygame
+import random
+
+# Initialize Pygame
+pygame.init()
+
+# Set up the display
+WIDTH = 800
+HEIGHT = 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Vibr Game - {prompt[:50]}...")
+
+# Colors
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+BLUE = (0, 0, 255)
+RED = (255, 0, 0)
+
+# Player
+player_x = WIDTH // 2
+player_y = HEIGHT // 2
+player_speed = 5
+
+# Game loop
+running = True
+clock = pygame.time.Clock()
+
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+    
+    # Handle input
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT]:
+        player_x -= player_speed
+    if keys[pygame.K_RIGHT]:
+        player_x += player_speed
+    if keys[pygame.K_UP]:
+        player_y -= player_speed
+    if keys[pygame.K_DOWN]:
+        player_y += player_speed
+    
+    # Keep player on screen
+    player_x = max(0, min(WIDTH - 50, player_x))
+    player_y = max(0, min(HEIGHT - 50, player_y))
+    
+    # Clear screen
+    screen.fill(WHITE)
+    
+    # Draw player
+    pygame.draw.rect(screen, BLUE, (player_x, player_y, 50, 50))
+    
+    # Draw instructions
+    font = pygame.font.Font(None, 36)
+    text = font.render("Use arrow keys to move", True, BLACK)
+    screen.blit(text, (10, 10))
+    
+    # Update display
+    pygame.display.flip()
+    clock.tick(60)
+
+pygame.quit()'''
+
+    def update_game_code(self, existing_code: str, update_prompt: str) -> str:
+        """Update existing game code based on new prompt"""
+        
+        if self.anthropic_client:
+            return self._update_with_anthropic(existing_code, update_prompt)
+        elif self.openai_client:
+            return self._update_with_openai(existing_code, update_prompt)
+        else:
+            return self._update_fallback(existing_code, update_prompt)
+
+    def _update_with_anthropic(self, existing_code: str, update_prompt: str) -> str:
+        """Update using Anthropic Claude"""
+        try:
+            response = self.anthropic_client.messages.create(
+                model="claude-3-sonnet-20240229",
+                max_tokens=4000,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": """You are an expert game developer. Update the provided Python/Pygame game code based on the user's request.
+                        Return ONLY the updated Python code, no explanations."""
+                    },
+                    {
+                        "role": "user",
+                        "content": f"Here's the current game code:\n\n{existing_code}\n\nUpdate it based on this request: {update_prompt}"
                     }
                 ]
             )
             return response.content[0].text
         except Exception as e:
-            raise Exception(f"AI update failed: {str(e)}")
+            print(f"Anthropic API error: {e}")
+            if self.openai_client:
+                return self._update_with_openai(existing_code, update_prompt)
+            else:
+                return self._update_fallback(existing_code, update_prompt)
+
+    def _update_with_openai(self, existing_code: str, update_prompt: str) -> str:
+        """Update using OpenAI GPT"""
+        try:
+            response = self.openai_client.chat.completions.create(
+                model="gpt-4",
+                max_tokens=4000,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": """You are an expert game developer. Update the provided Python/Pygame game code based on the user's request.
+                        Return ONLY the updated Python code, no explanations."""
+                    },
+                    {
+                        "role": "user",
+                        "content": f"Here's the current game code:\n\n{existing_code}\n\nUpdate it based on this request: {update_prompt}"
+                    }
+                ]
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            print(f"OpenAI API error: {e}")
+            return self._update_fallback(existing_code, update_prompt)
+
+    def _update_fallback(self, existing_code: str, update_prompt: str) -> str:
+        """Fallback update - just return the original code with a comment"""
+        return f'''# Updated based on: {update_prompt}
+# Note: AI features are disabled. This is the original game code.
+
+{existing_code}'''
 
 class AssetService:
     def create_asset(self, db: Session, asset: AssetCreate, owner_id: int) -> Asset:
