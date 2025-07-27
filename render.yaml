@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: vibr-backend
+    env: docker
+    dockerfilePath: ./Dockerfile.backend
+    dockerCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        value: sqlite:///./vibr.db
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ANTHROPIC_API_KEY
+        sync: false
+
+  - type: web
+    name: vibr-frontend
+    env: docker
+    dockerfilePath: ./Dockerfile.frontend
+    dockerCommand: node server.js
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://vibr-backend.onrender.com
+      - key: NEXT_PUBLIC_APP_NAME
+        value: Vibr 
