@@ -1,278 +1,144 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { ArrowLeftIcon, SparklesIcon, PlayIcon, SaveIcon } from '@heroicons/react/24/outline'
-import Link from 'next/link'
-import toast from 'react-hot-toast'
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function CreateGame() {
-  const [prompt, setPrompt] = useState('')
-  const [gameTitle, setGameTitle] = useState('')
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [generatedCode, setGeneratedCode] = useState('')
-  const [gamePreview, setGamePreview] = useState('')
+  const [prompt, setPrompt] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [gameCode, setGameCode] = useState('');
+  const [error, setError] = useState('');
+  const router = useRouter();
 
-  const handleGenerate = async () => {
+  const generateGame = async () => {
     if (!prompt.trim()) {
-      toast.error('Please enter a game description')
-      return
+      setError('Please enter a game description');
+      return;
     }
 
-    setIsGenerating(true)
-    toast.loading('Generating your game...')
+    setIsGenerating(true);
+    setError('');
 
     try {
-      // TODO: Call AI API
-      // For now, simulate API call
-      await new Promise(resolve => setTimeout(resolve, 3000))
-      
-      const mockCode = `import pygame
-import random
+      const response = await fetch('/api/generate-game', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt }),
+      });
 
-# Initialize Pygame
-pygame.init()
+      const data = await response.json();
 
-# Set up the display
-WIDTH = 800
-HEIGHT = 600
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("${gameTitle || 'My Game'}")
-
-# Colors
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-BLUE = (0, 0, 255)
-RED = (255, 0, 0)
-
-# Game variables
-player_x = WIDTH // 2
-player_y = HEIGHT - 50
-player_speed = 5
-score = 0
-
-# Game loop
-running = True
-clock = pygame.time.Clock()
-
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-    
-    # Handle input
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT] and player_x > 0:
-        player_x -= player_speed
-    if keys[pygame.K_RIGHT] and player_x < WIDTH - 50:
-        player_x += player_speed
-    
-    # Clear screen
-    screen.fill(BLACK)
-    
-    # Draw player
-    pygame.draw.rect(screen, BLUE, (player_x, player_y, 50, 50))
-    
-    # Draw score
-    font = pygame.font.Font(None, 36)
-    score_text = font.render(f"Score: {score}", True, WHITE)
-    screen.blit(score_text, (10, 10))
-    
-    pygame.display.flip()
-    clock.tick(60)
-
-pygame.quit()`
-
-      setGeneratedCode(mockCode)
-      toast.success('Game generated successfully!')
-    } catch (error) {
-      toast.error('Failed to generate game. Please try again.')
+      if (data.success) {
+        setGameCode(data.code);
+      } else {
+        setError(data.error || 'Failed to generate game');
+      }
+    } catch (err) {
+      setError('Failed to connect to server');
     } finally {
-      setIsGenerating(false)
+      setIsGenerating(false);
     }
-  }
+  };
 
-  const handleSave = async () => {
-    if (!gameTitle.trim()) {
-      toast.error('Please enter a game title')
-      return
-    }
-
-    if (!generatedCode) {
-      toast.error('No game code to save')
-      return
-    }
+  const saveGame = async () => {
+    if (!gameCode) return;
 
     try {
-      // TODO: Save game to backend
-      toast.success('Game saved successfully!')
-    } catch (error) {
-      toast.error('Failed to save game')
+      // For demo mode, we'll just show the code
+      // In a full implementation, this would save to a database
+      alert('Game saved! (Demo mode - code displayed below)');
+    } catch (err) {
+      setError('Failed to save game');
     }
-  }
-
-  const handlePlay = () => {
-    if (!generatedCode) {
-      toast.error('No game to play')
-      return
-    }
-
-    // TODO: Implement game preview/play functionality
-    toast.success('Game preview coming soon!')
-  }
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center py-6">
-            <Link href="/" className="btn-secondary mr-4">
-              <ArrowLeftIcon className="h-5 w-5 mr-2" />
-              Back
-            </Link>
-            <h1 className="text-2xl font-bold text-gray-900">Create New Game</h1>
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-white mb-4">
+              Create Your Game
+            </h1>
+            <p className="text-xl text-gray-300">
+              Describe your game idea and watch AI bring it to life
+            </p>
           </div>
-        </div>
-      </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Panel - Game Creation */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5 }}
-            className="space-y-6"
-          >
-            <div className="card">
-              <h2 className="text-xl font-semibold mb-4">Game Details</h2>
-              <div className="space-y-4">
-                <div>
-                  <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-                    Game Title
-                  </label>
-                  <input
-                    type="text"
-                    id="title"
-                    value={gameTitle}
-                    onChange={(e) => setGameTitle(e.target.value)}
-                    placeholder="Enter game title..."
-                    className="input-field"
-                  />
-                </div>
-              </div>
+          {/* Game Creation Form */}
+          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 mb-8">
+            <div className="mb-6">
+              <label htmlFor="prompt" className="block text-white text-lg font-semibold mb-3">
+                Describe Your Game
+              </label>
+              <textarea
+                id="prompt"
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                placeholder="e.g., Create a space shooter game where the player controls a spaceship and shoots aliens. The player should move with arrow keys and shoot with spacebar. Include scoring and multiple levels."
+                className="w-full h-32 p-4 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-300 resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
             </div>
 
-            <div className="card">
-              <h2 className="text-xl font-semibold mb-4">Describe Your Game</h2>
-              <div className="space-y-4">
-                <div>
-                  <label htmlFor="prompt" className="block text-sm font-medium text-gray-700 mb-2">
-                    Game Description
-                  </label>
-                  <textarea
-                    id="prompt"
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                    placeholder="Describe your game idea in detail. For example: 'Create a space shooter game where the player controls a spaceship and shoots aliens. The player should move with arrow keys and shoot with spacebar. Include scoring and multiple levels.'"
-                    rows={6}
-                    className="input-field"
-                  />
-                </div>
+            {error && (
+              <div className="mb-4 p-4 bg-red-500/20 border border-red-500/30 rounded-lg text-red-200">
+                {error}
+              </div>
+            )}
+
+            <div className="flex gap-4">
+              <button
+                onClick={generateGame}
+                disabled={isGenerating}
+                className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isGenerating ? 'Generating...' : 'Generate Game'}
+              </button>
+              <button
+                onClick={() => router.push('/')}
+                className="px-6 py-3 bg-white/20 hover:bg-white/30 text-white font-semibold rounded-lg transition-all duration-200"
+              >
+                Back to Home
+              </button>
+            </div>
+          </div>
+
+          {/* Generated Game Code */}
+          {gameCode && (
+            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-white">Generated Game Code</h2>
                 <button
-                  onClick={handleGenerate}
-                  disabled={isGenerating || !prompt.trim()}
-                  className="btn-primary w-full flex items-center justify-center"
+                  onClick={saveGame}
+                  className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200"
                 >
-                  {isGenerating ? (
-                    <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                      Generating...
-                    </>
-                  ) : (
-                    <>
-                      <SparklesIcon className="h-5 w-5 mr-2" />
-                      Generate Game
-                    </>
-                  )}
+                  Save Game
                 </button>
               </div>
+              
+              <div className="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+                <pre className="text-green-400 text-sm whitespace-pre-wrap">
+                  {gameCode}
+                </pre>
+              </div>
+              
+              <div className="mt-6 p-4 bg-blue-500/20 border border-blue-500/30 rounded-lg">
+                <h3 className="text-white font-semibold mb-2">How to Play:</h3>
+                <ul className="text-gray-300 space-y-1">
+                  <li>• Copy the code above</li>
+                  <li>• Save it as a .py file</li>
+                  <li>• Install Pygame: pip install pygame</li>
+                  <li>• Run: python your_game.py</li>
+                  <li>• Use arrow keys to move the blue square</li>
+                </ul>
+              </div>
             </div>
-
-            {generatedCode && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="card"
-              >
-                <h2 className="text-xl font-semibold mb-4">Game Actions</h2>
-                <div className="flex space-x-4">
-                  <button
-                    onClick={handlePlay}
-                    className="btn-primary flex-1 flex items-center justify-center"
-                  >
-                    <PlayIcon className="h-5 w-5 mr-2" />
-                    Play Game
-                  </button>
-                  <button
-                    onClick={handleSave}
-                    className="btn-secondary flex-1 flex items-center justify-center"
-                  >
-                    <SaveIcon className="h-5 w-5 mr-2" />
-                    Save Game
-                  </button>
-                </div>
-              </motion.div>
-            )}
-          </motion.div>
-
-          {/* Right Panel - Code Preview */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="space-y-6"
-          >
-            <div className="card">
-              <h2 className="text-xl font-semibold mb-4">Generated Code</h2>
-              {generatedCode ? (
-                <div className="bg-gray-900 rounded-lg p-4 overflow-auto max-h-96">
-                  <pre className="text-green-400 text-sm font-mono">
-                    <code>{generatedCode}</code>
-                  </pre>
-                </div>
-              ) : (
-                <div className="bg-gray-100 rounded-lg p-8 text-center">
-                  <SparklesIcon className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-600">
-                    Enter a game description and click "Generate Game" to see the code here.
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {generatedCode && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="card"
-              >
-                <h2 className="text-xl font-semibold mb-4">Game Preview</h2>
-                <div className="bg-gray-900 rounded-lg p-4 h-64 flex items-center justify-center">
-                  <div className="text-center text-gray-400">
-                    <PlayIcon className="h-12 w-12 mx-auto mb-2" />
-                    <p>Game preview will be available here</p>
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </motion.div>
+          )}
         </div>
-      </main>
+      </div>
     </div>
-  )
+  );
 }
