@@ -1,271 +1,216 @@
-# Vibr - Vibe Coding Playground
+# 🎮 Vibr - AI-Powered Game Creation Platform
 
-An AI-powered platform that enables anyone—technical or non-technical—to create, customize, and play simple 2D games using natural language prompts directly in a browser.
+**Create, save, and play games directly in your browser - no downloads required!**
 
-## 🎮 Features
+Vibr is a revolutionary web platform that lets you create custom 2D games using natural language prompts. Simply describe your game idea, and watch as AI generates a complete, playable Python game right in your browser.
 
-- **AI-Powered Game Creation**: Describe your game idea in plain English and watch AI generate complete, playable 2D games
-- **Real-time Preview**: See your game come to life instantly with live preview
-- **Iterative Updates**: Make changes through natural language and see immediate updates
-- **Asset Management**: Upload and manage custom game assets
-- **Game Sharing**: Share your creations with friends and collaborate
-- **No Coding Required**: Perfect for beginners and non-technical users
-- **Modern UI**: Beautiful, responsive interface built with modern web technologies
-- **Access Anywhere**: Works on computers, tablets, and smartphones
+## ✨ Features
 
-## 🌐 Access Vibr
+### 🚀 **Cloud-First Experience**
+- **No Downloads Required**: Everything runs in your browser
+- **Instant Game Creation**: Describe your game, get code instantly
+- **Browser Preview**: See your game in action before downloading
+- **Cross-Platform**: Works on any device with a web browser
 
-**Vibr is now live in the cloud!** You can access it from any device:
+### 🎯 **Smart Game Generation**
+- **AI-Powered**: Uses advanced AI to understand your game descriptions
+- **Multiple Game Types**: Space shooters, platformers, puzzle games, racing games, and more
+- **Intelligent Detection**: Automatically determines game type from your description
+- **Complete Code**: Generates full, runnable Python games with Pygame
 
-- **🌍 Live Demo**: [https://vibr.vercel.app](https://vibr.vercel.app)
-- **📱 Mobile Friendly**: Works perfectly on smartphones and tablets
-- **💻 Desktop Ready**: Optimized for computers and laptops
-- **🏫 School Safe**: No downloads or installations required
+### 💾 **Game Management**
+- **Save Games**: Store your creations with custom names
+- **Load Games**: Access your saved games anytime
+- **Local Storage**: Games saved in your browser for privacy
+- **Easy Sharing**: Download and share your games
 
-## 🚀 How to Use
+### 🎮 **Game Types Supported**
+- **Space Shooters**: "A space shooter with aliens and asteroids"
+- **Platformers**: "A jumping platformer like Mario"
+- **Puzzle Games**: "A color matching puzzle game"
+- **Racing Games**: "A car racing game with obstacles"
+- **Adventure Games**: "An adventure game with treasure hunting"
 
-1. **Open your browser** on any device (computer, phone, tablet)
-2. **Visit** [https://vibr.vercel.app](https://vibr.vercel.app)
-3. **Start creating games** with natural language descriptions
-4. **Share your creations** with friends and family
+## 🌐 **Live Demo**
 
-### Example Game Descriptions
+**Access Vibr right now:**
+- **Frontend**: https://vibr-frontend.onrender.com
+- **Backend**: https://vibr-backend.onrender.com
 
-- "Create a space shooter game where the player controls a spaceship and shoots aliens. The player should move with arrow keys and shoot with spacebar. Include scoring and multiple levels."
-- "Make a simple platformer game with a character that can jump and collect coins. The character should be able to double jump and there should be obstacles to avoid."
-- "Build a puzzle game where players need to match colored blocks. Include a timer and score system with increasing difficulty levels."
+## 🚀 **Quick Start**
 
-## 🤖 AI Options
+### **For Users (No Installation Required)**
 
-Vibr supports multiple AI providers for game generation:
+1. **Visit the Website**: Go to https://vibr-frontend.onrender.com
+2. **Describe Your Game**: Enter a detailed description of your game
+3. **Generate**: Click "Generate Game" and watch the magic happen
+4. **Preview**: See your game running in the browser
+5. **Save**: Give your game a name and save it
+6. **Download**: Get the Python file to run locally (optional)
 
-### **Option 1: Anthropic Claude (Recommended)**
-- **Best for**: High-quality, creative game generation
-- **Cost**: ~$0.01-0.05 per game generation
-- **Setup**: Get API key from [console.anthropic.com](https://console.anthropic.com)
+### **Example Prompts**
+- "Create a space shooter where I control a spaceship and shoot aliens"
+- "Make a platformer where I jump between platforms and collect coins"
+- "Design a puzzle game where I match colored tiles"
+- "Build a racing game where I avoid obstacles on the road"
 
-### **Option 2: OpenAI GPT-4**
-- **Best for**: Reliable, consistent game generation
-- **Cost**: ~$0.02-0.10 per game generation
-- **Setup**: Get API key from [platform.openai.com](https://platform.openai.com)
+## 🛠️ **For Developers**
 
-### **Option 3: No AI (Demo Mode)**
-- **Best for**: Testing and demonstration
-- **Cost**: Free
-- **Features**: Basic template games, no custom generation
-- **Setup**: Deploy without any API keys
+### **Prerequisites**
+- Python 3.8+
+- Node.js 18+ (for frontend development)
+- Git
 
-## 🏗️ Architecture
+### **Local Development Setup**
 
-### Frontend
-- **Framework**: Next.js 14 with App Router
-- **UI**: React 18 + Tailwind CSS
-- **Animations**: Framer Motion
-- **Type Safety**: TypeScript
-- **Deployment**: Vercel (global CDN)
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Rossgott/vibr.git
+   cd vibr
+   ```
 
-### Backend
-- **API**: FastAPI (Python)
-- **Database**: PostgreSQL (production) / SQLite (development)
-- **Authentication**: JWT tokens
-- **AI Integration**: Anthropic Claude API / OpenAI GPT-4
-- **Storage**: AWS S3 for assets
-- **Deployment**: Railway
+2. **Backend Setup**
+   ```bash
+   cd backend
+   pip install -r requirements-minimal.txt
+   python main-minimal.py
+   ```
 
-### Game Execution
-- **Runtime**: WebAssembly (Pyodide)
-- **Framework**: Pygame for 2D games
-- **Sandbox**: Secure containerized execution
+3. **Frontend Setup**
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
 
-## 🔧 For Developers
+4. **Access the app**
+   - Frontend: http://localhost:3000
+   - Backend: http://localhost:8000
 
-### Quick Deploy (No Local Setup Required)
+## 🏗️ **Architecture**
 
-The easiest way to deploy your own instance:
+### **Frontend (Next.js 14)**
+- **Framework**: Next.js with App Router
+- **Styling**: Tailwind CSS
+- **Language**: TypeScript
+- **Features**: 
+  - Game creation interface
+  - Browser-based game preview
+  - Local game storage
+  - Responsive design
 
-#### **Option A: With AI (Full Features)**
-1. **Fork this repository** to your GitHub account
-2. **Get AI API key** (Anthropic or OpenAI)
-3. **Deploy to Railway** (Backend):
-   - Visit [Railway](https://railway.app/)
-   - Connect your GitHub repo
-   - Add environment variables:
-     - `ANTHROPIC_API_KEY`: Your Anthropic API key (or)
-     - `OPENAI_API_KEY`: Your OpenAI API key
-     - `SECRET_KEY`: A secure random string
-4. **Deploy to Vercel** (Frontend):
-   - Visit [Vercel](https://vercel.com/)
-   - Import your GitHub repo
-   - Set environment variable:
-     - `NEXT_PUBLIC_API_URL`: Your Railway backend URL
+### **Backend (FastAPI)**
+- **Framework**: FastAPI
+- **Language**: Python
+- **Features**:
+  - AI-powered game generation
+  - Multiple game type support
+  - RESTful API
+  - CORS enabled
 
-#### **Option B: Without AI (Demo Mode)**
-1. **Fork this repository** to your GitHub account
-2. **Deploy to Railway** (Backend):
-   - Visit [Railway](https://railway.app/)
-   - Connect your GitHub repo
-   - Add environment variable:
-     - `SECRET_KEY`: A secure random string
-   - **No AI API key needed** - will use fallback mode
-3. **Deploy to Vercel** (Frontend):
-   - Visit [Vercel](https://vercel.com/)
-   - Import your GitHub repo
-   - Set environment variable:
-     - `NEXT_PUBLIC_API_URL`: Your Railway backend URL
+### **Game Generation**
+- **Engine**: Pygame
+- **Types**: Space shooters, platformers, puzzle games, racing games, adventure games
+- **Output**: Complete, runnable Python code
 
-### Local Development (Optional)
+## 🎮 **How It Works**
 
-If you want to run locally for development:
+1. **User Input**: User describes their game idea in natural language
+2. **AI Processing**: Backend analyzes the prompt and determines game type
+3. **Code Generation**: AI generates complete Pygame code based on the description
+4. **Browser Preview**: Frontend shows a preview of the game mechanics
+5. **Save & Share**: User can save the game and download the Python file
 
-```bash
-# Clone the repository
-git clone <repository-url>
-cd vibr
+## 🔧 **API Endpoints**
 
-# Backend setup
-cd backend
-pip install -r requirements.txt
-cp env.example .env
-# Edit .env with your configuration
-python main.py
-
-# Frontend setup (in new terminal)
-cd frontend
-npm install
-echo "NEXT_PUBLIC_API_URL=http://localhost:8000" > .env.local
-npm run dev
+### **Health Check**
+```
+GET /health
 ```
 
-## 📁 Project Structure
-
+### **Game Generation**
 ```
-vibr/
-├── backend/                 # FastAPI backend
-│   ├── main.py             # Application entry point
-│   ├── models.py           # Database models
-│   ├── schemas.py          # Pydantic schemas
-│   ├── services.py         # Business logic
-│   ├── auth.py             # Authentication
-│   ├── database.py         # Database configuration
-│   └── requirements.txt    # Python dependencies
-├── frontend/               # Next.js frontend
-│   ├── app/                # Next.js App Router
-│   ├── components/         # React components
-│   ├── lib/                # Utility functions
-│   ├── types/              # TypeScript types
-│   └── package.json        # Node.js dependencies
-├── .github/workflows/      # GitHub Actions for deployment
-├── railway.json            # Railway deployment config
-├── render.yaml             # Render deployment config
-├── vercel.json             # Vercel deployment config
-└── README.md              # This file
+POST /api/generate-game
+Content-Type: application/json
+
+{
+  "prompt": "Create a space shooter game"
+}
 ```
 
-## 🔌 API Endpoints
+## 🎯 **Game Types & Keywords**
 
-### Authentication
-- `POST /auth/register` - Register new user
-- `POST /auth/login` - Login user
+The system automatically detects game types based on keywords:
 
-### Games
-- `GET /games` - Get user's games
-- `POST /games` - Create new game
-- `GET /games/{id}` - Get specific game
-- `PUT /games/{id}` - Update game
-- `DELETE /games/{id}` - Delete game
+- **Space Shooter**: `space`, `shooter`, `alien`, `spaceship`, `asteroid`
+- **Platformer**: `platform`, `jump`, `mario`, `runner`
+- **Puzzle**: `puzzle`, `match`, `connect`, `block`
+- **Racing**: `racing`, `car`, `drive`, `speed`
+- **Adventure**: Default for other descriptions
 
-### AI
-- `POST /ai/generate-game` - Generate game code from prompt
-- `POST /ai/update-game` - Update existing game code
+## 🌟 **Why Vibr?**
 
-### Assets
-- `GET /assets` - Get user's assets
-- `POST /assets` - Upload new asset
+### **For Users**
+- **No Technical Knowledge Required**: Just describe what you want
+- **Instant Gratification**: See your game idea come to life immediately
+- **Educational**: Learn about game development through generated code
+- **Creative Freedom**: Endless possibilities with natural language
 
-## 🛠️ Development
+### **For Educators**
+- **Teaching Tool**: Great for introducing programming concepts
+- **Student Engagement**: Visual, interactive way to learn coding
+- **Project-Based Learning**: Students can create and modify games
 
-### Running Tests
-```bash
-# Backend tests
-cd backend
-pytest
+### **For Developers**
+- **Rapid Prototyping**: Quickly test game ideas
+- **Code Examples**: Study generated code for learning
+- **Extensible**: Easy to add new game types and features
 
-# Frontend tests
-cd frontend
-npm test
-```
+## 🚀 **Deployment**
 
-### Code Formatting
-```bash
-# Backend
-cd backend
-black .
-isort .
+### **Cloud Deployment (Recommended)**
+The app is designed for cloud deployment with:
+- **Render**: Backend and frontend hosting
+- **Vercel**: Alternative frontend hosting
+- **Railway**: Alternative backend hosting
 
-# Frontend
-cd frontend
-npm run lint
-npm run format
-```
+### **Local Deployment**
+See the developer setup section above for local development.
 
-## 🚀 Deployment
+## 🤝 **Contributing**
 
-### Automatic Deployment
+We welcome contributions! Here's how you can help:
 
-The project is configured for automatic deployment:
+1. **Fork the repository**
+2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
+3. **Commit your changes**: `git commit -m 'Add amazing feature'`
+4. **Push to the branch**: `git push origin feature/amazing-feature`
+5. **Open a Pull Request**
 
-- **Frontend**: Automatically deploys to Vercel on push to main
-- **Backend**: Automatically deploys to Railway on push to main
-- **Database**: PostgreSQL on Railway
-- **CDN**: Vercel Edge Network for global performance
+### **Areas for Contribution**
+- New game types
+- Improved AI prompts
+- Better browser preview
+- Enhanced UI/UX
+- Performance optimizations
 
-### Manual Deployment
-
-See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions to various platforms.
-
-## 🔒 Security
-
-- **HTTPS**: All connections are encrypted
-- **CORS**: Properly configured for production domains
-- **Authentication**: JWT-based secure authentication
-- **Input Validation**: All inputs are validated and sanitized
-- **Rate Limiting**: API endpoints are rate-limited
-
-## 📊 Performance
-
-- **Global CDN**: Vercel Edge Network for fast loading worldwide
-- **Optimized Images**: Next.js Image optimization
-- **Code Splitting**: Automatic code splitting for faster loads
-- **Caching**: Intelligent caching strategies
-- **Mobile Optimized**: Responsive design for all devices
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📝 License
+## 📝 **License**
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## 🙏 **Acknowledgments**
 
-- [Anthropic](https://anthropic.com/) for Claude AI API
-- [OpenAI](https://openai.com/) for GPT-4 API
-- [Pygame](https://www.pygame.org/) for 2D game development
-- [Next.js](https://nextjs.org/) for the frontend framework
-- [FastAPI](https://fastapi.tiangolo.com/) for the backend API
-- [Tailwind CSS](https://tailwindcss.com/) for styling
-- [Vercel](https://vercel.com/) for hosting and CDN
-- [Railway](https://railway.app/) for backend hosting
+- **Pygame**: For the game development framework
+- **FastAPI**: For the robust backend API
+- **Next.js**: For the modern frontend framework
+- **Tailwind CSS**: For the beautiful styling
 
-## 📞 Support
+## 📞 **Support**
 
-For support, email support@vibr.dev or join our Discord community.
+- **Issues**: [GitHub Issues](https://github.com/Rossgott/vibr/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/Rossgott/vibr/discussions)
+- **Email**: [Your Email]
 
 ---
 
-**Vibr** - Making game development accessible to everyone, everywhere! 🎮✨
+**Ready to create your first game? Visit [Vibr](https://vibr-frontend.onrender.com) and start building!** 🎮✨
